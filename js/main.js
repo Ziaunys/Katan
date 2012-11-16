@@ -66,3 +66,92 @@ function ResourcePanel() {
 
     return self;
 }
+
+var c2 = document.getElementById('c').getContext('2d');
+var canvasWidth = 300 * 3;
+var canvasHeight = 300 * 5;
+c2.fillStyle = '#f00';
+var src= 'http://www.clker.com/cliparts/8/6/4/1/11949856711586665480racked.svg.thumb.png';
+
+Array.prototype.shuffle = function() {
+  var i = this.length, j, tempi, tempj;
+    if ( i == 0 ){
+          return false;
+    }
+  while ( --i ) {
+     j       = Math.floor( Math.random() * ( i + 1 ) );
+     tempi   = this[i];
+     tempj   = this[j];
+     this[i] = tempj;
+     this[j] = tempi;
+  }
+  return this;
+};
+
+function Tile(x, y, img_src) {   
+    var self = {x:x, y:y, src:img_src};
+    self.render = function() {
+        c2.save();
+        c2.beginPath();
+        c2.moveTo(self.x, self.y + 100);
+        c2.lineTo(self.x + 150, self.y);
+        c2.lineTo(self.x + 300, self.y + 100);
+        c2.lineTo(self.x + 300, self.y + 200);
+        c2.lineTo(self.x + 150, self.y + 300);
+        c2.lineTo(self.x, self.y + 200);
+        c2.lineTo(self.x, self.y + 100);
+        c2.closePath();
+        c2.stroke();
+        var img = new Image();
+        img.onload = function () {
+            c2.drawImage(img, self.x + 75, self.y + 75, 150, 150);
+        };
+        img.src = img_src;
+    };
+    return self;   
+}
+
+function makeCoordinates(){
+    var coords = [];
+    var x_offset = 0;
+    var row_count = 0;
+    var j = 0;
+    var i = 0;
+    for(i = 0; i < 5; i++){
+        x_offset = 0;
+        row_count = 5;       
+        if(i=== 0 || i === 4){
+            x_offset = 300;
+            row_count = 3;
+        }
+        else if(i%2 != 0) {
+            x_offset = 150;
+            row_count = 4;
+        }
+        for(j = 0; j < row_count; j++) {
+            coords[coords.length] = {x:x_offset + j*300, y: i*200};
+        }
+    }
+    coords.shuffle();
+    return coords;
+}
+
+var x = makeCoordinates();
+
+function makeBoard(coordinates){
+    var board = new Array();
+    for(var i = 0; i < coordinates.length; i++){
+        var coord = coordinates[i];
+        board[board.length] = Tile(coord.x, coord.y ,src);
+    }
+    return board;
+}
+console.log(x.length);
+var board = makeBoard(x);
+
+for(var i = 0; i < board.length; i++) {
+    board[i].render();
+}
+
+
+    
