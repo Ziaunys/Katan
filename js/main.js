@@ -10,8 +10,8 @@ var coffee_c = document.getElementById("coffeeCanvas");
 var rack_c = document.getElementById("rackCanvas");
 var cable_c = document.getElementById("cableCanvas");
 
-var cardWidth = 200;
-var cardHeight = 250;
+var cardWidth = 300;
+var cardHeight = 300;
 var imgWidth = cardWidth * 0.75;
 var imgHeight = cardHeight * 0.75;
 var imgTopMargin = cardHeight * 0.1;
@@ -36,11 +36,6 @@ function Resource(label, canvas, img_src, count) {
         self.ctx.clearRect(imgWidth / 2, textTopMargin - 15, 20, 20);
         self.ctx.fillText(self.count, cardWidth/2, textTopMargin);          
     };
-
-    self.updateCount = function (new_count) {
-        self.count = new_count;
-        self.render();
-    };        
     return self;
 }
 
@@ -53,12 +48,8 @@ function ResourcePanel() {
         rack: Resource("rack", rack_c, rack_src, 0),
     };
 
-    self.update = function (label, count) {
-        self[label].updateCount(count);
-    };
-
     self.fullDraw = function() {
-        for( key in self) {
+        for(var key in self) {
              self[key].render();
         }
     };
