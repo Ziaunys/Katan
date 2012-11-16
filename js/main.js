@@ -1,9 +1,17 @@
-var canvasWidth = 900;
-var canvasHeight = 500;
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
-var cardWidth = canvasWidth / 6;
-var cardHeight = canvasHeight * .5;
+var cpu_src = 'images/tile_cpu.png';
+var sysadmin_src = 'images/tile_sysadmin.png';
+var coffee_src = 'images/tile_coffee.png';
+var rack_src = 'images/tile_rack.png';
+var cable_src = 'images/tile_cable.png';
+
+var cpu_c = document.getElementById("cpuCanvas");
+var sysadmin_c = document.getElementById("sysadminCanvas");
+var coffee_c = document.getElementById("coffeeCanvas");
+var rack_c = document.getElementById("rackCanvas");
+var cable_c = document.getElementById("cableCanvas");
+
+var cardWidth = 200;
+var cardHeight = 250;
 var imgWidth = cardWidth * 0.75;
 var imgHeight = cardHeight * 0.75;
 var imgTopMargin = cardHeight * 0.1;
@@ -12,64 +20,49 @@ var textTopMargin = imgTopMargin * 2 + imgHeight;
 var margin = cardWidth / 7;
 var textLeftMargin = cardWidth / 2;
 
-var src = 'http://www.html5canvastutorials.com/demos/assets/darth-vader.jpg';
-
-function Resource(x, y, img, count) {
-    var self = {x:x, y:y, img:img, count:count};
+function Resource(label, canvas, img, count) {
+    var ctx = canvas.getContext("2d");
+    var self = {img:img, count:count, ctx: ctx, label:label};
     self.render = function() {
-        ctx.fillStyle = "black";
-        ctx.strokeRect(self.x, self.y, cardWidth, cardHeight, cardWidth / 12);
-        var offset = self.x + imgLeftMargin;
+        self.ctx.fillStyle = "black";
+        self.ctx.strokeRect(0, 0, cardWidth, cardHeight, cardWidth / 12);
         var img = new Image();
         img.onload = function() {
-            ctx.drawImage(img, offset, self.y + imgTopMargin, imgWidth, imgHeight);
+            ctx.drawImage(img, imgLeftMargin, imgTopMargin, imgWidth, imgHeight);
         };
         img.src = self.img;
-        ctx.font = "bold 16px Arial";
-        ctx.clearRect(self.x + textLeftMargin - 10, self.y + textTopMargin - 15, 20, 20);
-        if(self.count < 10){
-            ctx.fillText(self.count, self.x + textLeftMargin - 5, self.y + textTopMargin);
-        }
-        else {
-            ctx.fillText(self.count, self.x + textLeftMargin - 10, self.y + textTopMargin);
-        }            
+        self.ctx.font = "bold 16px Arial";
+        self.ctx.textAlign = 'center';
+        self.ctx.clearRect(imgWidth / 2, textTopMargin - 15, 20, 20);
+        self.ctx.fillText(self.count, cardWidth/2, textTopMargin);          
+    };
+
+    self.updateCount = function (new_count) {
+        self.count = new_count;
+        self.render();
     };        
     return self;
 }
 
-function Resources() {
-    var self = {cards: {}};
-    self.drawCards = function (){
-        for(var key in self.cards){
-            var obj = self.cards[key];
+function ResourcePanel() {
+    var self = {
+        cpu: Resource("cpus", sheep_src, 0),
+        sysadmin: Resource("sysadmins", wood_src, 0),
+        coffee: Resource("coffee", stone_src, 0),
+        cables: Resource("cables", brick_src, 0),
+        racks: Resource("racks", wood_src, 0),
+    };
+
+    self.update = function (label, count) {
+        self[label].updateCount(count);
+    };
+
+    self.fullDraw = function() {
+        for(var key in self) {
+            var obj = self[key];
             obj.render();
-        }            
+        }
     };
 
-    self.addCard = function(label, img) {
-        var x = (Object.keys(self.cards).length + 1) * margin + Object.keys(self.cards).length * cardWidth;
-        var y = (canvasHeight - cardHeight) / 2;
-        self.cards[label] = Resource(x, y, img, 0);
-    };
-
-    self.setCard = function(label, value) {
-        self.cards[label].count = value;
-        self.cards[label].render();
-    };
     return self;
 }
-
-var x = Resources();
-x.addCard("farm", src);
-x.addCard("pasture", src);
-x.addCard("brick", src);
-x.addCard("stone", src);
-x.addCard("wood", src);
-x.drawCards();
-
-x.setCard("brick",4);
-
-
-
-
-
