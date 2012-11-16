@@ -1,8 +1,8 @@
-var cpu_src = 'images/tile_cpu.png';
-var sysadmin_src = 'images/tile_sysadmin.png';
-var coffee_src = 'images/tile_coffee.png';
-var rack_src = 'images/tile_rack.png';
-var cable_src = 'images/tile_cable.png';
+var cpu_src = 'images/cpu.png';
+var sysadmin_src = 'images/sysadmin.png';
+var coffee_src = 'images/coffee.png';
+var rack_src = 'images/rack.png';
+var cable_src = 'images/cable.png';
 
 var cpu_c = document.getElementById("cpuCanvas");
 var sysadmin_c = document.getElementById("sysadminCanvas");
@@ -20,9 +20,9 @@ var textTopMargin = imgTopMargin * 2 + imgHeight;
 var margin = cardWidth / 7;
 var textLeftMargin = cardWidth / 2;
 
-function Resource(label, canvas, img, count) {
+function Resource(label, canvas, img_src, count) {
     var ctx = canvas.getContext("2d");
-    var self = {img:img, count:count, ctx: ctx, label:label};
+    var self = {img:img_src, count:count, ctx: ctx, label:label};
     self.render = function() {
         self.ctx.fillStyle = "black";
         self.ctx.strokeRect(0, 0, cardWidth, cardHeight, cardWidth / 12);
@@ -30,7 +30,7 @@ function Resource(label, canvas, img, count) {
         img.onload = function() {
             ctx.drawImage(img, imgLeftMargin, imgTopMargin, imgWidth, imgHeight);
         };
-        img.src = self.img;
+        img.src = self.img_src;
         self.ctx.font = "bold 16px Arial";
         self.ctx.textAlign = 'center';
         self.ctx.clearRect(imgWidth / 2, textTopMargin - 15, 20, 20);
@@ -46,11 +46,11 @@ function Resource(label, canvas, img, count) {
 
 function ResourcePanel() {
     var self = {
-        cpu: Resource("cpus", sheep_src, 0),
-        sysadmin: Resource("sysadmins", wood_src, 0),
-        coffee: Resource("coffee", stone_src, 0),
-        cables: Resource("cables", brick_src, 0),
-        racks: Resource("racks", wood_src, 0),
+        cpu: Resource("cpu", cpu_c, cpu_src, 0),
+        sysadmin: Resource("sysadmin", sysadmin_c, sysadmin_src, 0),
+        coffee: Resource("coffee", coffee_c, coffee_src, 0),
+        cable: Resource("cable", cable_c, cable_src, 0),
+        rack: Resource("rack", rack_c, rack_src, 0),
     };
 
     self.update = function (label, count) {
@@ -58,16 +58,15 @@ function ResourcePanel() {
     };
 
     self.fullDraw = function() {
-        for(var key in self) {
-            var obj = self[key];
-            obj.render();
+        for( key in self) {
+             self[key].render();
         }
     };
 
     return self;
 }
 
-var c2 = document.getElementById('c').getContext('2d');
+var c2 = document.getElementById('board').getContext('2d');
 var canvasWidth = 300 * 3;
 var canvasHeight = 300 * 5;
 c2.fillStyle = '#f00';
@@ -152,6 +151,6 @@ var board = makeBoard(x);
 for(var i = 0; i < board.length; i++) {
     board[i].render();
 }
-
-
+resource_panel = ResourcePanel();
+resource_panel.fullDraw();
     
